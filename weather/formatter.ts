@@ -16,12 +16,15 @@ export function formatCurrentWeather(weather: Weather) {
 		)}</b>\n\n` +
 		`<b>Time</b>: <code>${weather.location.localtime}</code>\n\n` +
 		`<b>Temperature</b>: <code>${weather.current.temp_c}°C</code>\n` +
+		`<b>Feels Like</b>: <code>${weather.current.feelslike_c}°C</code>\n` +
 		`<b>Humidity</b>: <code>${weather.current.humidity}%</code>\n` +
 		`<b>Condition</b>: <code>${escape(
 			weather.current.condition.text
 		)}</code>\n` +
 		`<b>Cloud Coverage</b>: <code>${weather.current.cloud}%</code>\n` +
 		`<b>Wind</b>: <code>${weather.current.wind_kph}km/h</code>\n` +
+		`<b>UV Index</b>: <code>${weather.current.uv}</code>\n` +
+		`<b>Visibility</b>: <code>${weather.current.vis_km}km</code>\n` +
 		`<b>Last Updated</b>: <code>${Math.ceil(
 			(localTime - weatherTime) / 60
 		)} minutes ago</code>`
@@ -64,7 +67,7 @@ export function formatForecast(forecast: Forecast) {
 					`<b>Min 🌡</b>: <code>${ele.day.mintemp_c}°C</code>\n` +
 					`<b>Chance of rain</b>: <code>${ele.day.daily_chance_of_rain}%</code>\n` +
 					`<b>Chance of snow</b>: <code>${ele.day.daily_chance_of_snow}%</code>\n` +
-					`<b>UV</b>: <code>${ele.day.uv}%</code>\n`
+					`<b>UV Index</b>: <code>${ele.day.uv}%</code>\n`
 			)
 			.join("\n")}`
 	);
