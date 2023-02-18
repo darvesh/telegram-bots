@@ -67,7 +67,7 @@ export function formatForecast(forecast: Forecast) {
 					`<b>Min 🌡</b>: <code>${ele.day.mintemp_c}°C</code>\n` +
 					`<b>Chance of rain</b>: <code>${ele.day.daily_chance_of_rain}%</code>\n` +
 					`<b>Chance of snow</b>: <code>${ele.day.daily_chance_of_snow}%</code>\n` +
-					`<b>UV Index</b>: <code>${ele.day.uv}%</code>\n`
+					`<b>UV Index</b>: <code>${ele.day.uv}</code>\n`
 			)
 			.join("\n")}`
 	);
