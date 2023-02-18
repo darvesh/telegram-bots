@@ -44,7 +44,7 @@ bot.inlineQuery(/^[\w\s'-]+$/, async (ctx) => {
 			),
 		})),
 		{
-			cache_time: 0,
+			cache_time: Number(Deno.env.get("CACHE_TIME")) || 0,
 		}
 	);
 });
