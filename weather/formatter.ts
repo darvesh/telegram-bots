@@ -7,10 +7,7 @@ export function escape(text: string) {
 		.replaceAll("&", "&amp;");
 }
 function formatPlaceName<T extends string | undefined>(names: T[]) {
-	const nameArray = names.filter(
-		(name, index) => Boolean(name) && names.indexOf(name) === index
-	);
-	return nameArray.join(", ");
+	return names.filter(Boolean).join(", ");
 }
 
 
