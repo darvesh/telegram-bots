@@ -6,13 +6,24 @@ export function escape(text: string) {
 		.replaceAll(">", "&gt;")
 		.replaceAll("&", "&amp;");
 }
+function formatPlaceName<T extends string | undefined>(names: T[]) {
+	const nameArray = names.filter(
+		(name, index) => Boolean(name) && names.indexOf(name) === index
+	);
+	return nameArray.join(", ");
+}
+
 
 export function formatCurrentWeather(weather: Weather) {
 	const weatherTime = weather.current.last_updated_epoch;
 	const localTime = weather.location.localtime_epoch;
 	return (
 		`<b>🌡️ ${escape(
-			`${weather.location.name}, ${weather.location.region}, ${weather.location.country}`
+			formatPlaceName([
+				weather.location.name,
+				weather.location.region,
+				weather.location.country,
+			])
 		)}</b>\n\n` +
 		`<b>Time</b>: <code>${weather.location.localtime}</code>\n\n` +
 		`<b>Temperature</b>: <code>${weather.current.temp_c}°C</code>\n` +
@@ -34,7 +45,11 @@ export function formatCurrentWeather(weather: Weather) {
 export function formatAstronomy(astronomy: Astronomy) {
 	return (
 		`<b>🌠 ${escape(
-			`${astronomy.location.name}, ${astronomy.location.region}, ${astronomy.location.country}`
+			formatPlaceName([
+				weather.location.name,
+				weather.location.region,
+				weather.location.country,
+			])
 		)}</b>\n\n` +
 		`<b>Time</b>: <code>${astronomy.location.localtime}</code>\n\n` +
 		`<b>Astronomy</b>\n\n` +
@@ -55,7 +70,11 @@ export function formatAstronomy(astronomy: Astronomy) {
 export function formatForecast(forecast: Forecast) {
 	return (
 		`<b>🌠 ${escape(
-			`${forecast.location.name}, ${forecast.location.region}, ${forecast.location.country}`
+			formatPlaceName([
+				weather.location.name,
+				weather.location.region,
+				weather.location.country,
+			])
 		)}</b>\n\n` +
 		`<b>Time</b>: <code>${forecast.location.localtime}</code>\n\n` +
 		`<b>Forecast</b>\n\n` +
