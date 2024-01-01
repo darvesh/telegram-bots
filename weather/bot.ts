@@ -5,8 +5,8 @@ import {
 	NextFunction,
 } from "https://deno.land/x/grammy@v1.14.1/mod.ts";
 
-import { escape } from "./formatter.ts";
-import { forecast, weather, astronomy, api } from "./handler.ts";
+import { escape, formatNames } from "./formatter.ts";
+import { api, astronomy, forecast, weather } from "./handler.ts";
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
 if (!BOT_TOKEN) throw new Error("Bot Token is not set!");
@@ -34,7 +34,7 @@ bot.inlineQuery(/^[\w\s'-]+$/, async (ctx) => {
 			type: "article",
 			id: `id:${location.id}`,
 			title: escape(`${location.name}`),
-			description: escape(`${location.region}, ${location.country}`),
+			description: escape(formatNames([location.region, location.country])),
 			input_message_content: {
 				message_text: "Crunching weather data for you...",
 			},
