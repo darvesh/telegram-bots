@@ -6,7 +6,7 @@ import {
 } from "https://deno.land/x/grammy@v1.14.1/mod.ts";
 
 import { escape, formatNames } from "./formatter.ts";
-import { api, astronomy, forecast, weather } from "./handler.ts";
+import { api, astronomy, forecast, weather, aqi } from "./handler.ts";
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
 if (!BOT_TOKEN) throw new Error("Bot Token is not set!");
@@ -74,6 +74,9 @@ bot.on("callback_query:data", async (ctx) => {
 	}
 	if (data.t === "weather") {
 		return await weather(ctx, data.lc, messageId, data.uid);
+	}
+	if (data.t === "aqi") {
+		return await aqi(ctx, data.lc, messageId, data.uid);
 	}
 	if (data.t === "forecast") {
 		return await forecast(ctx, data.lc, messageId, data.uid);

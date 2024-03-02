@@ -103,3 +103,19 @@ interface Location {
 	localtime_epoch: number;
 	localtime: string;
 }
+
+interface AirQuality {
+	co: number;
+	no2: number;
+	o3: number;
+	so2: number;
+	pm2_5: number;
+	pm10: number;
+	"us-epa-index": 1 | 2 | 3 | 4 | 5 | 6;
+	"gb-defra-index": 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+}
+export type AQI = Weather & {
+	current: Current & {
+		air_quality: AirQuality;
+	};
+};
