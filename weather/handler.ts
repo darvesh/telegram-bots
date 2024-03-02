@@ -6,15 +6,16 @@ import {
 	formatAstronomy,
 	formatCurrentWeather,
 	formatForecast,
+	formatAQI,
 } from "./formatter.ts";
-import { Astronomy, Forecast, SearchLocation, Weather } from "./type.ts";
+import { AQI, Astronomy, Forecast, SearchLocation, Weather } from "./type.ts";
 
 const API_URL = "https://api.weatherapi.com/v1";
 
 const API_KEY = Deno.env.get("API_KEY");
 if (!API_KEY) throw new Error("API KEY is not set in the env!");
 
-type APICallsType = "weather" | "astronomy" | "forecast" | "search";
+type APICallsType = "weather" | "astronomy" | "forecast" | "search" | "aqi";
 export async function api<Type extends APICallsType>(
 	type: Type,
 	query: string,
@@ -25,6 +26,7 @@ export async function api<Type extends APICallsType>(
 		astronomy: `${API_URL}/astronomy.json?key=${API_KEY}&q=${query}&${extra}`,
 		forecast: `${API_URL}/forecast.json?key=${API_KEY}&q=${query}&days=3&aqi=no&alerts=no&${extra}`,
 		search: `${API_URL}/search.json?key=${API_KEY}&q=${query}`,
+		aqi: `${API_URL}/current.json?key=${API_KEY}&q=${query}&aqi=yes&${extra}`,
 	} as const;
 	const response = await fetch(url[type]);
 	if (response.ok) {
@@ -34,6 +36,7 @@ export async function api<Type extends APICallsType>(
 			weather: Weather;
 			astronomy: Astronomy;
 			search: SearchLocation[];
+			aqi: AQI;
 		}[Type];
 	}
 	return null;
@@ -71,6 +74,14 @@ export async function weather(
 						lc: location,
 						uid: userId,
 					})}`
+				)
+				.text(
+					"Air Quality",
+					`${JSON.stringify({
+						t: "aqi",
+						lc: location,
+						uid: userId,
+					})}`
 				),
 		}
 	);
@@ -94,6 +105,14 @@ export async function astronomy(
 			.text(
 				"Weather",
 				`${JSON.stringify({ t: "weather", lc: location, uid: userId })}`
+			)
+			.text(
+				"Air Quality",
+				`${JSON.stringify({
+					t: "aqi",
+					lc: location,
+					uid: userId,
+				})}`
 			),
 	});
 }
@@ -112,6 +131,50 @@ export async function forecast(
 			.text(
 				"Astronomy",
 				`${JSON.stringify({ t: "astronomy", lc: location, uid: userId })}`
+			)
+			.text(
+				"Weather",
+				`${JSON.stringify({ t: "weather", lc: location, uid: userId })}`
+			)
+			.text(
+				"Air Quality",
+				`${JSON.stringify({
+					t: "aqi",
+					lc: location,
+					uid: userId,
+				})}`
+			),
+	});
+}
+
+export async function aqi(
+	ctx:
+		| Filter<Context, "callback_query:data">
+		| Filter<Context, "chosen_inline_result">,
+	location: string,
+	messageId: string,
+	userId?: number
+) {
+	const airQuality = await api("aqi", location);
+	if (!airQuality) return null;
+	return ctx.api.editMessageTextInline(messageId, formatAQI(airQuality), {
+		parse_mode: "HTML",
+		reply_markup: new InlineKeyboard()
+			.text(
+				"Astronomy",
+				`${JSON.stringify({
+					t: "astronomy",
+					lc: location,
+					uid: userId,
+				})}`
+			)
+			.text(
+				"Forecast",
+				`${JSON.stringify({
+					t: "forecast",
+					lc: location,
+					uid: userId,
+				})}`
 			)
 			.text(
 				"Weather",
