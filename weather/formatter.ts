@@ -114,11 +114,11 @@ export function formatAQI(aqi: AQI) {
 		`<b>Ozone</b>: <code>${findBand("ozone", aqi.current.air_quality.o3)} [${
 			aqi.current.air_quality.o3
 		}μg/m³]</code>\n` +
-		`<b>Sulphur dioxide</b>: <code>${findBand(
+		`<b>Sulphur Dioxide</b>: <code>${findBand(
 			"sulphur",
 			aqi.current.air_quality.so2
 		)} [${aqi.current.air_quality.so2}μg/m³]</code>\n` +
-		`<b>Nitrogen dioxide</b>: <code>${findBand(
+		`<b>Nitrogen Dioxide</b>: <code>${findBand(
 			"nitrogen",
 			aqi.current.air_quality.no2
 		)} [${aqi.current.air_quality.no2}μg/m³]</code>\n` +
