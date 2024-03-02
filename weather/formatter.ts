@@ -35,7 +35,7 @@ export function formatCurrentWeather(weather: Weather) {
 		`<b>Cloud Coverage</b>: <code>${weather.current.cloud}%</code>\n` +
 		`<b>Wind</b>: <code>${weather.current.wind_kph}km/h</code>\n` +
 		`<b>UV Index</b>: <code>${weather.current.uv}</code>\n` +
-		`<b>Visibility</b>: <code>${weather.current.vis_km}km</code>\n` +
+		`<b>Visibility</b>: <code>${weather.current.vis_km}km</code>\n\n` +
 		`<b>Last Updated</b>: <code>${Math.ceil(
 			(localTime - weatherTime) / 60
 		)} minutes ago</code>`
@@ -105,7 +105,7 @@ export function formatAQI(aqi: AQI) {
 			])
 		)}</b>\n\n` +
 		`<b>Time</b>: <code>${aqi.location.localtime}</code>\n\n` +
-		`<b>PM10</b>: <code> ${findBand("pm10", aqi.current.air_quality.pm10)} [${
+		`<b>PM10</b>: <code>${findBand("pm10", aqi.current.air_quality.pm10)} [${
 			aqi.current.air_quality.pm10
 		}μg/m³]</code>\n` +
 		`<b>PM2.5</b>: <code>${findBand("pm2_5", aqi.current.air_quality.pm2_5)} [${
