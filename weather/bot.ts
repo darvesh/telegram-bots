@@ -43,7 +43,7 @@ bot.inlineQuery(/^[\w\s'-]+$/, async (ctx) => {
 	const locations = await api("search", query);
 	if (!locations || !locations.length)
 		return ctx.answerInlineQuery(emptyResult(query), {
-			cache_time: Number(Deno.env.get("CACHE_TIME")) || 0,
+			cache_time: 0,
 		});
 	await ctx.answerInlineQuery(
 		locations.map((location) => ({
@@ -108,7 +108,7 @@ bot.inlineQuery(/.*/, async (ctx) => {
 					};
 				}),
 			{
-				cache_time: Number(Deno.env.get("CACHE_TIME")) || 0,
+				cache_time: 0,
 			}
 		);
 	}
@@ -131,7 +131,11 @@ bot.on("callback_query:data", async (ctx) => {
 		lc: string;
 		uid?: number;
 	};
-	if (ctx.callbackQuery?.from?.id !== data.uid) {
+
+	if (
+		ctx?.chat?.type === "private" ||
+		ctx.callbackQuery?.from?.id !== data.uid
+	) {
 		return ctx.answerCallbackQuery(
 			"Only the person who sent the above message can use this button."
 		);
