@@ -17,7 +17,7 @@ export async function cacheLastUserLocation(
 				locationIds.length < 5
 					? locationIds
 					: locationIds.slice(locationIds.length - 4, locationIds.length);
-			await store.set(["user", userId.toString()], [locationId, ...cachedIds]);
+			await store.set(["user", userId.toString()], [...cachedIds, locationId]);
 		}
 	} else {
 		await store.set(["user", userId.toString()], [locationId]);
