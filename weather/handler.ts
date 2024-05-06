@@ -2,11 +2,12 @@ import { Context } from "https://deno.land/x/grammy@v1.14.1/context.ts";
 import { Filter } from "https://deno.land/x/grammy@v1.14.1/filter.ts";
 import { InlineKeyboard } from "https://deno.land/x/grammy@v1.14.1/mod.ts";
 
+import { InlineQueryResult } from "https://deno.land/x/grammy@v1.14.1/types.ts";
 import {
+	formatAQI,
 	formatAstronomy,
 	formatCurrentWeather,
 	formatForecast,
-	formatAQI,
 } from "./formatter.ts";
 import { AQI, Astronomy, Forecast, SearchLocation, Weather } from "./type.ts";
 
@@ -181,4 +182,21 @@ export async function aqi(
 				`${JSON.stringify({ t: "weather", lc: location, uid: userId })}`
 			),
 	});
+}
+
+export function emptyResult(location: string): InlineQueryResult[] {
+	return [
+		{
+			type: "article",
+			id: "iscoldbotnotfoundthelocation",
+			title: `No result found`,
+			input_message_content: {
+				message_text: `Weather data not found for "<i>${location.toLowerCase()}</i>”`,
+				parse_mode: "HTML",
+			},
+			reply_markup: new InlineKeyboard()
+				.row()
+				.switchInlineCurrent("Try another place", location.slice(0, -1)),
+		},
+	];
 }
