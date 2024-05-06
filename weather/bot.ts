@@ -6,7 +6,20 @@ import {
 } from "https://deno.land/x/grammy@v1.14.1/mod.ts";
 
 import { escape, formatNames } from "./formatter.ts";
-import { api, astronomy, forecast, weather, aqi } from "./handler.ts";
+import {
+	api,
+	aqi,
+	astronomy,
+	emptyResult,
+	forecast,
+	weather,
+} from "./handler.ts";
+import {
+	cacheLastUserLocation,
+	cachePlaceName,
+	getPlaceName,
+	getUserLocations,
+} from "./kv.ts";
 
 const BOT_TOKEN = Deno.env.get("BOT_TOKEN");
 if (!BOT_TOKEN) throw new Error("Bot Token is not set!");
@@ -28,8 +41,11 @@ bot.inlineQuery(/^[\w\s'-]+$/, async (ctx) => {
 	const query = ctx.inlineQuery.query?.trim();
 	if (!query) return;
 	const locations = await api("search", query);
-	if (!locations || !locations.length) return;
-	return ctx.answerInlineQuery(
+	if (!locations || !locations.length)
+		return ctx.answerInlineQuery(emptyResult(query), {
+			cache_time: Number(Deno.env.get("CACHE_TIME")) || 0,
+		});
+	await ctx.answerInlineQuery(
 		locations.map((location) => ({
 			type: "article",
 			id: `id:${location.id}`,
@@ -47,13 +63,64 @@ bot.inlineQuery(/^[\w\s'-]+$/, async (ctx) => {
 			cache_time: Number(Deno.env.get("CACHE_TIME")) || 0,
 		}
 	);
+	await Promise.all(
+		locations.map((location) =>
+			cachePlaceName(`id:${location.id}`, [
+				location.name,
+				location.region,
+				location.country,
+			])
+		)
+	);
 });
 
-bot.on("chosen_inline_result", (ctx) => {
+bot.inlineQuery(/.*/, async (ctx) => {
+	const query = ctx.inlineQuery.query?.trim();
+	if (!query) {
+		const locationIds = await getUserLocations(ctx.from.id);
+		if (!locationIds.length) return;
+		const locations = await Promise.all(
+			locationIds.map(async (locationId) => {
+				const location = await getPlaceName(locationId);
+				if (!location) return null;
+				return [locationId, ...location];
+			})
+		);
+		return ctx.answerInlineQuery(
+			locations
+				.filter((location): location is NonNullable<typeof location> =>
+					Boolean(location)
+				)
+				.map((location) => {
+					const [locationId, name, region, country] = location;
+					return {
+						type: "article",
+						id: `${locationId}`,
+						title: escape(`${name}`),
+						description: escape(formatNames([region, country])),
+						input_message_content: {
+							message_text: "Crunching weather data for you...",
+						},
+						reply_markup: new InlineKeyboard().switchInlineCurrent(
+							"Try another location",
+							name.slice(0, -1)
+						),
+					};
+				}),
+			{
+				cache_time: Number(Deno.env.get("CACHE_TIME")) || 0,
+			}
+		);
+	}
+});
+
+bot.on("chosen_inline_result", async (ctx) => {
 	const location = ctx.chosenInlineResult.result_id;
 	const messageId = ctx.inlineMessageId;
 	if (!messageId) return;
-	return weather(ctx, location, messageId, ctx.from.id);
+	const place = await getPlaceName(location);
+	await weather(ctx, location, messageId, ctx.from.id);
+	if (place) await cacheLastUserLocation(ctx.from.id, location);
 });
 
 bot.on("callback_query:data", async (ctx) => {
