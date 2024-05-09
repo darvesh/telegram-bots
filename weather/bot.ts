@@ -133,13 +133,14 @@ bot.on("callback_query:data", async (ctx) => {
 	};
 
 	if (
-		ctx?.chat?.type === "private" ||
+		ctx?.chat?.type !== "private" &&
 		ctx.callbackQuery?.from?.id !== data.uid
 	) {
 		return ctx.answerCallbackQuery(
 			"Only the person who sent the above message can use this button."
 		);
 	}
+
 	if (data.t === "astronomy") {
 		return await astronomy(ctx, data.lc, messageId, data.uid);
 	}
