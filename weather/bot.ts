@@ -132,10 +132,8 @@ bot.on("callback_query:data", async (ctx) => {
 		uid?: number;
 	};
 
-	if (
-		ctx?.chat?.type !== "private" &&
-		ctx.callbackQuery?.from?.id !== data.uid
-	) {
+	const DARVESH_ID = 272286804;
+	if (ctx.callbackQuery?.from?.id !== data.uid && data.uid !== DARVESH_ID) {
 		return ctx.answerCallbackQuery(
 			"Only the person who sent the above message can use this button."
 		);
