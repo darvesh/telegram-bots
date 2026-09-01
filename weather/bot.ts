@@ -3,7 +3,7 @@ import {
 	Context,
 	InlineKeyboard,
 	NextFunction,
-} from "https://deno.land/x/grammy@v1.14.1/mod.ts";
+} from "npm:grammy";
 
 import { escape, formatNames } from "./formatter.ts";
 import {
