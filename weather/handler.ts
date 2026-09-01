@@ -1,8 +1,8 @@
-import { Context } from "https://deno.land/x/grammy@v1.14.1/context.ts";
-import { Filter } from "https://deno.land/x/grammy@v1.14.1/filter.ts";
-import { InlineKeyboard } from "https://deno.land/x/grammy@v1.14.1/mod.ts";
+import { Context } from "npm:grammy";
+import { Filter } from "npm:grammy";
+import { InlineKeyboard } from "npm:grammy";
 
-import { InlineQueryResult } from "https://deno.land/x/grammy@v1.14.1/types.ts";
+import { InlineQueryResult } from "npm:grammy";
 import {
 	formatAQI,
 	formatAstronomy,
