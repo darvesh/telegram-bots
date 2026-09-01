@@ -1,7 +1,8 @@
 
 import { webhookCallback } from "npm:grammy";
 
-import { bot } from "./bot.ts";
+import b from "./bot.ts";
+const bot = b.bot;
 
 const handleUpdate = webhookCallback(bot, "std/http");
 const SECRET = Deno.env.get("SECRET");
