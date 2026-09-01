@@ -168,4 +168,4 @@ bot.on("callback_query:data", async (ctx) => {
 			),
 	});
 });
-export { bot };
+export default { bot };
